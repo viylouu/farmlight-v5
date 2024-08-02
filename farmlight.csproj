@@ -17,4 +17,10 @@
     <PackageReference Include="SimulationFramework.SkiaSharp" Version="0.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="assets\atlas.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

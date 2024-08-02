@@ -1,3 +1,5 @@
-﻿partial class farmlight { 
-    
-}
+﻿partial class farmlight {
+    static ITexture atlas;
+    static listTS<listTS<listTS<chunk>>> world;
+    static int chunksize = 24;
+ }
