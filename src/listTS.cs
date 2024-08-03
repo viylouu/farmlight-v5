@@ -31,14 +31,14 @@
             get {
                 lock (_lock) {
                     if (index < 0 || index >= len)
-                        throw new ArgumentOutOfRangeException(nameof(index), "Index is out of range.");
+                        return default(T);
                     return data[index];
                 }
             }
             set {
                 lock (_lock) {
                     if (index < 0 || index >= len)
-                        throw new ArgumentOutOfRangeException(nameof(index), "Index is out of range.");
+                    { }
                     data[index] = value;
                 }
             }

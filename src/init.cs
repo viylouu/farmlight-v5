@@ -4,5 +4,6 @@
         atlas = Graphics.LoadTexture(@"assets\atlas.png");
         world = new listTS<listTS<listTS<chunk>>>();
         Simulation.SetFixedResolution(1920,1080,Color.Black,false,false,true);
+        initperlin();
     }
 }
