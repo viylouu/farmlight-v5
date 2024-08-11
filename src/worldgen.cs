@@ -1,66 +1,138 @@
 ﻿partial class farmlight {
     static void initperlin() {
         perl = new perlin();
-        perl.setseed(random(int.MinValue, int.MaxValue));
+        seed = random(int.MinValue, int.MaxValue);
+        perl.setseed(seed);
         perl.setfreq(.05f);
     }
 
     static async void genchunk(int u, int v, int w) {
         world[u][v][w].tiles = new byte[chunksize,chunksize,chunksize];
         world[u][v][w].coll = new bool[chunksize,chunksize,chunksize];
-        world[u][v][w].lod = Graphics.CreateTexture(chunksize*12+16,chunksize*12+16);
-        world[u][v][w].generated = true;
+        world[u][v][w].lod = Graphics.CreateTexture(chunklodsizex, chunklodsizey);
 
-        byte i = 0;
-        byte imod = 64;
+        int i = 0;
 
         for(int x = 0; x < chunksize; x++)
             for(int y = 0; y < chunksize; y++)
                 for(int z = 0; z < chunksize; z++) {
-                    if(perl.get(u*chunksize+x,v*chunksize+y,w*chunksize+z) > .5f && y+v*chunksize < perl.get(u*chunksize+x,w*chunksize+z)*32)
-                        world[u][v][w].tiles[x,y,z] = 19;
+                    if(perl.get(u*chunksize+x,v*chunksize+y,w*chunksize+z)>.5f&&y+v*chunksize<perl.get(u*chunksize+x,w*chunksize+z)*32)
+                        world[u][v][w].tiles[x,y,z] = 1;
 
                     i++;
-                    if (i % imod == 0)
+                    if (i % maxasynccalls == 0)
+                        await Task.Delay(1);
+                }
+
+        world[u][v][w].generated = true;
+
+        for(int x = 0; x < chunksize; x++)
+            for(int y = 0; y < chunksize; y++)
+                for(int z = 0; z < chunksize; z++) {
+                    if (world[u][v][w].tiles[x,y,z] == 1) {
+                        if (y+v*chunksize>perl.get(u*chunksize+x,w*chunksize+z)*32-5 && 
+                           (y<chunksize-1?(world[u][v][w].tiles[x,y+1,z]==0):false))
+                            world[u][v][w].tiles[x, y, z] = 2;
+                        else if (y+v*chunksize>perl.get(u*chunksize+x,w*chunksize+z)*32-5)
+                            world[u][v][w].tiles[x,y,z] = 3;
+                        else
+                            world[u][v][w].tiles[x,y,z] = 4;
+                    }
+
+                    i++;
+                    if (i % maxasynccalls == 0)
                         await Task.Delay(1);
                 }
 
         for (int y = 0; y < chunksize; y++)
             for (int z = 0; z < chunksize; z++)
-                for (int x = 0; x < chunksize; x++) {
-                    int lodx = x*6 - z*6 + chunksize*6, lody = z*3 + x*3 - y*6 + chunksize*6;
+                for (int x = 0; x < chunksize; x++)
+                    if (world[u][v][w].tiles[x,y,z] != 0) {
+                        byte neighbors = 0;
 
-                    //xmax = chunksize*12
-                    //ymax = chunksize*12
+                        if(x>0?(world[u][v][w].tiles[x-1,y,z]!=0):true)
+                            neighbors++;
 
-                    byte tilex = (byte)((world[u][v][w].tiles[x,y,z]%8)*16), 
-                         tiley = (byte)(floor(world[u][v][w].tiles[x,y,z]/8)*16);
+                        if(x<chunksize-1 && world[u][v][w].tiles[x+1,y,z]!=0)
+                            neighbors++;
 
-                    for(int j = 0; j < 16; j++)
-                        for(int k = 0; k < 16; k++) {
-                            if(atlas.GetPixel(tilex+j, tiley+k).A > 0)
-                                world[u][v][w].lod.SetPixel(lodx+j,lody+k,atlas.GetPixel(tilex+j, tiley+k));
+                        if(z>0?(world[u][v][w].tiles[x,y,z-1]!=0):true)
+                            neighbors++;
 
-                            i++;
-                            if (i % imod == 0)
-                                await Task.Delay(1);
+                        if(z<chunksize-1 && world[u][v][w].tiles[x,y,z+1]!=0)
+                            neighbors++;
+
+                        if(y>0?(world[u][v][w].tiles[x,y-1,z]!=0):true)
+                            neighbors++;
+
+                        if(y<chunksize-1 && world[u][v][w].tiles[x,y+1,z]!=0)
+                            neighbors++;
+
+                        if(neighbors < 6) {
+                            int lodx = x*6-z*6+chunksize*6, lody = z*3+x*3-y*6+chunksize*6;
+
+                            byte tilex = (byte)(world[u][v][w].tiles[x,y,z]%16*16), 
+                                 tiley = (byte)(floor(world[u][v][w].tiles[x,y,z]/16)*16);
+
+                            for(int j = 0; j < 16; j++)
+                                for(int k = 0; k < 16; k++) {
+                                    if(atlas.GetPixel(tilex+j, tiley+k).A > 0)
+                                        world[u][v][w].lod.SetPixel(lodx+j,lody+k,atlas.GetPixel(tilex+j, tiley+k));
+
+                                    i++;
+                                    if (i % maxasynccalls == 0)
+                                        await Task.Delay(1);
+                                }
                         }
-                }
+                    }
 
-        world[u][v][w].lod.ApplyChanges();
+        world[u][v][w].generatedtex = true;
     }
 
     static async void mapexpand() {
+        canexpand = false;
+
+        int x = 0;
+
         if (world.len == 0)
-            world.add(new listTS<listTS<chunk>>());
+            for(int i = 0; i < 8; i++) {
+                world.add(new listTS<listTS<chunk>>());
+
+                //i++;
+                //if (i % maxasynccalls == 0)
+                //    await Task.Delay(1);
+            }
 
         if (world[0].len == 0)
-            world[0].add(new listTS<chunk>());
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++) {
+                    world[i].add(new listTS<chunk>());
+
+                    //i++;
+                    //if (i % maxasynccalls == 0)
+                    //    await Task.Delay(1);
+                }
 
         if (world[0][0].len == 0)
-            world[0][0].add(new chunk());
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    for (int k = 0; k < 8; k++) {
+                        world[i][j].add(new chunk());
 
-        if (!world[0][0][0].generated)
-            genchunk(0,0,0);
+                        //i++;
+                        //if (i % maxasynccalls == 0)
+                        //    await Task.Delay(1);
+                    }
+
+        canexpand = true;
+    }
+
+    static void genallchunks() {
+        for (int x = 0; x < 8; x++)
+            for (int y = 0; y < 8; y++)
+                for (int z = 0; z < 8; z++)
+                    if (x < world.len && y < world[x].len && z < world[x][y].len)
+                        if (!world[x][y][z].generated)
+                            genchunk(x, y, z);
     }
 }

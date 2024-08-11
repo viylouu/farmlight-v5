@@ -38,7 +38,7 @@
             set {
                 lock (_lock) {
                     if (index < 0 || index >= len)
-                    { }
+                    { Console.WriteLine($"index out of bounds of the array! idx: {index}"); return; }
                     data[index] = value;
                 }
             }
