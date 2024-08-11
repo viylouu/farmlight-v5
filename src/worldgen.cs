@@ -16,7 +16,7 @@
         for(int x = 0; x < chunksize; x++)
             for(int y = 0; y < chunksize; y++)
                 for(int z = 0; z < chunksize; z++) {
-                    if(perl.get(u*chunksize+x,v*chunksize+y,w*chunksize+z)>.5f&&y+v*chunksize<perl.get(u*chunksize+x,w*chunksize+z)*32)
+                    if(perl.get(u*chunksize+x,v*chunksize+y,w*chunksize+z)>.5f&&y+v*chunksize<perl.get(u*chunksize+x,w*chunksize+z)*16+32)
                         world[u][v][w].tiles[x,y,z] = 1;
 
                     i++;
@@ -30,11 +30,20 @@
             for(int y = 0; y < chunksize; y++)
                 for(int z = 0; z < chunksize; z++) {
                     if (world[u][v][w].tiles[x,y,z] == 1) {
-                        if (y+v*chunksize>perl.get(u*chunksize+x,w*chunksize+z)*32-5 && 
-                           (y<chunksize-1?(world[u][v][w].tiles[x,y+1,z]==0):false))
-                            world[u][v][w].tiles[x, y, z] = 2;
-                        else if (y+v*chunksize>perl.get(u*chunksize+x,w*chunksize+z)*32-5)
-                            world[u][v][w].tiles[x,y,z] = 3;
+                        if (y+v*chunksize>perl.get(u*chunksize+x,w*chunksize+z)*16+24) {
+                            if(y<chunksize-1) {
+                                if (world[u][v][w].tiles[x,y+1,z]==0)
+                                    world[u][v][w].tiles[x,y,z] = 2;
+                                else
+                                    world[u][v][w].tiles[x, y, z] = 3;
+                            } /*else if(v<world[u].len-1) {
+                                if (world[u][v+1][w].tiles[x,0,z] == 0)
+                                    world[u][v][w].tiles[x,y,z] = 2;
+                                else
+                                    world[u][v][w].tiles[x, y, z] = 3;
+                            }*/ else
+                                world[u][v][w].tiles[x,y,z] = 2;
+                        }
                         else
                             world[u][v][w].tiles[x,y,z] = 4;
                     }
@@ -52,19 +61,14 @@
 
                         if(x>0?(world[u][v][w].tiles[x-1,y,z]!=0):true)
                             neighbors++;
-
                         if(x<chunksize-1 && world[u][v][w].tiles[x+1,y,z]!=0)
                             neighbors++;
-
                         if(z>0?(world[u][v][w].tiles[x,y,z-1]!=0):true)
                             neighbors++;
-
                         if(z<chunksize-1 && world[u][v][w].tiles[x,y,z+1]!=0)
                             neighbors++;
-
                         if(y>0?(world[u][v][w].tiles[x,y-1,z]!=0):true)
                             neighbors++;
-
                         if(y<chunksize-1 && world[u][v][w].tiles[x,y+1,z]!=0)
                             neighbors++;
 
@@ -95,7 +99,7 @@
         int x = 0;
 
         if (world.len == 0)
-            for(int i = 0; i < 8; i++) {
+            for(int i = 0; i < worldsizex; i++) {
                 world.add(new listTS<listTS<chunk>>());
 
                 //i++;
@@ -104,8 +108,8 @@
             }
 
         if (world[0].len == 0)
-            for (int i = 0; i < 8; i++)
-                for (int j = 0; j < 8; j++) {
+            for (int i = 0; i < worldsizex; i++)
+                for (int j = 0; j < worldsizey; j++) {
                     world[i].add(new listTS<chunk>());
 
                     //i++;
@@ -114,9 +118,9 @@
                 }
 
         if (world[0][0].len == 0)
-            for (int i = 0; i < 8; i++)
-                for (int j = 0; j < 8; j++)
-                    for (int k = 0; k < 8; k++) {
+            for (int i = 0; i < worldsizex; i++)
+                for (int j = 0; j < worldsizey; j++)
+                    for (int k = 0; k < worldsizez; k++) {
                         world[i][j].add(new chunk());
 
                         //i++;
@@ -128,9 +132,9 @@
     }
 
     static void genallchunks() {
-        for (int x = 0; x < 8; x++)
-            for (int y = 0; y < 8; y++)
-                for (int z = 0; z < 8; z++)
+        for (int x = 0; x < worldsizex; x++)
+            for (int y = 0; y < worldsizey; y++)
+                for (int z = 0; z < worldsizez; z++)
                     if (x < world.len && y < world[x].len && z < world[x][y].len)
                         if (!world[x][y][z].generated)
                             genchunk(x, y, z);

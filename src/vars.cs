@@ -21,4 +21,8 @@
 
     static int chunklodsizex = chunksize*12+16;
     static int chunklodsizey = chunksize*12+16;
- }
+
+    static int worldsizex = 8;
+    static int worldsizey = 12;
+    static int worldsizez = 8;
+}

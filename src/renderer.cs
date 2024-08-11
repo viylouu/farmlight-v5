@@ -56,19 +56,14 @@
 
                             if(x>0?(world[u][v][w].tiles[x-1,y,z]!=0):true)
                                 neighbors++;
-
                             if(x<chunksize-1 && world[u][v][w].tiles[x+1,y,z]!=0)
                                 neighbors++;
-
                             if(z>0?(world[u][v][w].tiles[x,y,z-1]!=0):true)
                                 neighbors++;
-
                             if(z<chunksize-1 && world[u][v][w].tiles[x,y,z+1]!=0)
                                 neighbors++;
-
                             if(y>0?(world[u][v][w].tiles[x,y-1,z]!=0):true)
                                 neighbors++;
-
                             if(y<chunksize-1 && world[u][v][w].tiles[x,y+1,z]!=0)
                                 neighbors++;
 
