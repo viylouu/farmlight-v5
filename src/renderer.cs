@@ -8,19 +8,21 @@
 
         renderworld(c);
 
+        //c.Antialias(false);
+
         c.Fill(Color.White);
-        c.FontSize(16);
+        //c.Font(font);
         drawcalls++;
-        c.DrawText(round(1/Time.DeltaTime)+" fps", Vector2.One*3);
+        c.DrawAlignedText(round(1/Time.DeltaTime)+" fps", 16, 3,3, Alignment.TopLeft);
         drawcalls++;
-        c.DrawText("seed "+seed, new Vector2(3, 27));
+        c.DrawAlignedText("seed "+seed, 16, 3,27, Alignment.TopLeft);
 
 
 
 
 
         drawcalls++;
-        c.DrawText(drawcalls+" drawcalls", new Vector2(3, 51));
+        c.DrawAlignedText(drawcalls+" drawcalls", 16, 3,51, Alignment.TopLeft);
     }
 
     static void renderworld(ICanvas c) { 
@@ -31,13 +33,13 @@
                         if (u != 0 || v != 0 || w != 0) {
                             float screenx = 1920/2+(u*chunksize*6-w*chunksize*6)*zoom-cam.X*16*zoom, screeny = 1080/2+(v*chunksize*-6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*16*zoom;
                             
-                            if (world[u][v][w].generatedtex) {
+                            if (world[u][v][w].generatedtex && !world[u][v][w].empty) {
                                 if (!world[u][v][w].appliedtex)
                                 { world[u][v][w].lod.ApplyChanges(); world[u][v][w].appliedtex = true; }
 
-                                if(screenx>-chunklodsizex*2&&screeny>-chunklodsizey*2&&screenx<Window.Width+chunklodsizex*2&&screeny<Window.Height+chunklodsizey*2) {
+                                if(screenx>-chunklodsizex*(zoom*.5f)&&screeny>-chunklodsizey*(zoom*.5f)&&screenx<Window.Width+chunklodsizex*(zoom*.5f)&&screeny<Window.Height+chunklodsizey*(zoom*.5f)) {
                                     drawcalls++;
-                                    c.DrawTexture(world[u][v][w].lod, screenx, screeny, world[u][v][w].lod.Width * zoom, world[u][v][w].lod.Height * zoom, Alignment.Center);
+                                    c.DrawTexture(world[u][v][w].lod, screenx, screeny, world[u][v][w].lod.Width * zoom, world[u][v][w].lod.Height * -zoom, Alignment.Center);
                                 }
                             }
                         }
@@ -75,9 +77,9 @@
                                 if(screenx>-size&&screeny>-size&&screenx<Window.Width+size&&screeny<Window.Height+size) {
                                     drawcalls++;
                                     c.DrawTexture(
-                                        atlas, 
-                                        new Rectangle(world[u][v][w].tiles[x,y,z]*16%128, floor(world[u][v][w].tiles[x,y,z]/8)*16, 16, 16),
-                                        new Rectangle(screenx, screeny, 16*zoom, 16*zoom, Alignment.Center)
+                                        atlas,
+                                        new Rectangle(world[u][v][w].tiles[x,y,z]*16%256, floor(world[u][v][w].tiles[x,y,z]/16)*16, 16, 16),
+                                        new Rectangle(screenx, screeny, 16*zoom, -16*zoom, Alignment.Center)
                                     );
                                 }
                             }

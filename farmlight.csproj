@@ -12,13 +12,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SimulationFramework" Version="0.2.1" />
-    <PackageReference Include="SimulationFramework.Desktop" Version="0.2.1" />
-    <PackageReference Include="SimulationFramework.SkiaSharp" Version="0.2.1" />
+    <PackageReference Include="SimulationFramework" Version="0.3.0-alpha.3" />
+    <PackageReference Include="SimulationFramework.Desktop" Version="0.3.0-alpha.3" />
+    <PackageReference Include="SimulationFramework.OpenGL" Version="0.3.0-alpha.3" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="assets\atlas.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="assets\noita.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

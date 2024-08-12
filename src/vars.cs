@@ -23,6 +23,9 @@
     static int chunklodsizey = chunksize*12+16;
 
     static int worldsizex = 8;
-    static int worldsizey = 12;
+    static int worldsizey = 20;
     static int worldsizez = 8;
+
+    //font rendering
+    //static IFont font;
 }

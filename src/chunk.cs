@@ -6,5 +6,6 @@
                     generatedtex = false,
                     appliedtex = false;
         public ITexture lod;
+        public bool empty = true;
     }
 }

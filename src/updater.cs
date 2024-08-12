@@ -1,7 +1,7 @@
 ﻿partial class farmlight {
     static void update() {
-        if (canexpand)
-            mapexpand();
+        //if (canexpand)
+        //    mapexpand();
         genallchunks();
 
         if (Keyboard.IsKeyDown(Key.W))
