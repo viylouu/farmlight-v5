@@ -2,9 +2,15 @@
     static void rend(ICanvas c) {
         c.Clear(Color.Black);
 
+        Gradient sky = new LinearGradient(0, 0, 0, Window.Height, new ColorF[] { skyL.ToColorF(), skyD.ToColorF() });
+
         update();
 
         drawcalls = 0;
+
+        c.Fill(sky);
+        drawcalls++;
+        c.DrawRect(0, 0, Window.Width, Window.Height);
 
         renderworld(c);
 
@@ -25,11 +31,16 @@
         c.DrawAlignedText(drawcalls+" drawcalls", 16, 3,51, Alignment.TopLeft);
     }
 
-    static void renderworld(ICanvas c) { 
+    static void renderworld(ICanvas c) {
+        int minx = (int)clamp(player.X-renderdist/2,0,world.len),
+            maxx = (int)clamp(player.X+renderdist/2,0,world.len),
+            minz = (int)clamp(player.Z-renderdist/2,0,world[0][0].len),
+            maxz = (int)clamp(player.Z+renderdist/2,0,world[0][0].len);
+
         if(world != null)
             for (int v = 0; v < world[0].len; v++)
-                for (int w = 0; w < world[0][0].len; w++)
-                    for (int u = 0; u < world.len; u++) {
+                for (int w = minz; w < maxz; w++)
+                    for (int u = minx; u < maxx; u++) {
                         if (u != 0 || v != 0 || w != 0) {
                             float screenx = 1920/2+(u*chunksize*6-w*chunksize*6)*zoom-cam.X*16*zoom, screeny = 1080/2+(v*chunksize*-6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*16*zoom;
                             
@@ -39,7 +50,17 @@
 
                                 if(screenx>-chunklodsizex*(zoom*.5f)&&screeny>-chunklodsizey*(zoom*.5f)&&screenx<Window.Width+chunklodsizex*(zoom*.5f)&&screeny<Window.Height+chunklodsizey*(zoom*.5f)) {
                                     drawcalls++;
-                                    c.DrawTexture(world[u][v][w].lod, screenx, screeny, world[u][v][w].lod.Width * zoom, world[u][v][w].lod.Height * -zoom, Alignment.Center);
+                                    float bright = v*chunksize/((float)chunksize*worldsizey);
+                                    c.DrawTexture(
+                                        world[u][v][w].lod, 
+                                        new Rectangle(
+                                            screenx, screeny,
+                                            world[u][v][w].lod.Width * zoom, 
+                                            world[u][v][w].lod.Height * -zoom, 
+                                            Alignment.Center
+                                        ),
+                                        new ColorF(bright, bright, bright, 1)
+                                    );
                                 }
                             }
                         }
@@ -78,7 +99,7 @@
                                     drawcalls++;
                                     c.DrawTexture(
                                         atlas,
-                                        new Rectangle(world[u][v][w].tiles[x,y,z]*16%256, floor(world[u][v][w].tiles[x,y,z]/16)*16, 16, 16),
+                                        new Rectangle(world[u][v][w].tiles[x,y,z]*16%256, 240-floor(world[u][v][w].tiles[x,y,z]/16)*16, 16, 16),
                                         new Rectangle(screenx, screeny, 16*zoom, -16*zoom, Alignment.Center)
                                     );
                                 }

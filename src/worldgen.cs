@@ -16,10 +16,10 @@
         for(int x = 0; x < chunksize; x++)
             for(int y = 0; y < chunksize; y++)
                 for(int z = 0; z < chunksize; z++) {
-                    if(perl.get(u*chunksize+x,v*chunksize+y,w*chunksize+z)>.5f&&y+v*chunksize<perl.get(u*chunksize+x,w*chunksize+z)*16+32)
+                    if(perl.get(u*chunksize+x,v*chunksize+y,w*chunksize+z)>.5f&&y+v*chunksize<perl.get(u*chunksize+x,w*chunksize+z)*16+175)
                     { world[u][v][w].tiles[x,y,z] = 1; world[u][v][w].empty = false; }
-                    else if(u*chunksize+x==0&&w*chunksize+z==0)
-                    { world[u][v][w].tiles[x,y,z] = 1; world[u][v][w].empty = false; }
+                    //else if(u*chunksize+x==0||w*chunksize+z==0)
+                    //{ world[u][v][w].tiles[x,y,z] = 1; world[u][v][w].empty = false; }
 
                     i++;
                     if (i % maxasynccalls == 0)
@@ -32,7 +32,7 @@
             for(int y = 0; y < chunksize; y++)
                 for(int z = 0; z < chunksize; z++) {
                     if (world[u][v][w].tiles[x,y,z] == 1) {
-                        if (y+v*chunksize>perl.get(u*chunksize+x,w*chunksize+z)*16+24) {
+                        if (y+v*chunksize>perl.get(u*chunksize+x,w*chunksize+z)*16+165) {
                             if(y<chunksize-1) {
                                 if (world[u][v][w].tiles[x,y+1,z]==0)
                                     world[u][v][w].tiles[x,y,z] = 2;
@@ -83,7 +83,7 @@
                             for(int j = 0; j < 16; j++)
                                 for(int k = 0; k < 16; k++) {
                                     if(atlas.GetPixel(tilex+j, tiley+k).A > 0)
-                                        world[u][v][w].lod.SetPixel(lodx+j,lody+k,atlas.GetPixel(tilex+j, tiley+k));
+                                        world[u][v][w].lod.SetPixel(lodx+j,lody+k,atlas.GetPixel(tilex+j,tiley+k));
 
                                     i++;
                                     if (i % maxasynccalls == 0)

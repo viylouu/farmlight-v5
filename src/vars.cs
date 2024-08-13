@@ -1,20 +1,24 @@
 ﻿partial class farmlight {
+    //misc
     static ITexture atlas;
-    static listTS<listTS<listTS<chunk>>> world;
-    static int chunksize = 12;
+
+    //player
+    static Vector3 player;
 
     //cam
     static Vector2 cam;
-    static float zoom = 1;
-    static float zoomact = 1;
+    static float zoom = 128;
+    static float zoomact = 6;
 
     //performance
     static int maxasynccalls = 96;
+    static int renderdist = 6;
 
     //data
     static uint drawcalls;
 
     //worldgen
+    static int chunksize = 12;
     static perlin perl;
     static int seed;
     static bool canexpand = true;
@@ -26,6 +30,9 @@
     static int worldsizey = 20;
     static int worldsizez = 8;
 
-    //font rendering
-    //static IFont font;
+    static listTS<listTS<listTS<chunk>>> world;
+
+    //sky
+    static Color skyL = new Color(111,183,171);
+    static Color skyD = new Color(83,151,153);
 }
