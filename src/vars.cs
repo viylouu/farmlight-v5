@@ -14,9 +14,6 @@
     static int maxasynccalls = 96;
     static int renderdist = 6;
 
-    //data
-    static uint drawcalls;
-
     //worldgen
     static int chunksize = 12;
     static perlin perl;
@@ -35,4 +32,10 @@
     //sky
     static Color skyL = new Color(111,183,171);
     static Color skyD = new Color(83,151,153);
+
+    //shading
+    static bool hshaded = false;
+
+    //3D
+    static bool view3D;
 }

@@ -25,5 +25,8 @@
         zoomact += Mouse.ScrollWheelDelta/3;
         zoomact = clamp(zoomact,1,6);
         zoom = dtween(zoom, zoomact, 12);
+
+        if (Keyboard.IsKeyPressed(Key.C))
+            view3D = !view3D;
     }
 }

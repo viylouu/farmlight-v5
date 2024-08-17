@@ -5,7 +5,7 @@
         world = new listTS<listTS<listTS<chunk>>>();
         Simulation.SetFixedResolution(1920,1080,Color.Black,false,false,true);
         initperlin();
-        //font = Graphics.LoadFont(@"assets\noita.ttf");
         mapexpand();
+        atlas.WrapModeY = atlas.WrapModeX = TileMode.Repeat;
     }
 }

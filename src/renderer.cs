@@ -6,29 +6,32 @@
 
         update();
 
-        drawcalls = 0;
-
         c.Fill(sky);
-        drawcalls++;
         c.DrawRect(0, 0, Window.Width, Window.Height);
 
-        renderworld(c);
-
-        //c.Antialias(false);
+        if (!view3D)
+            renderworld(c);
+        else
+            render3D(c);
 
         c.Fill(Color.White);
-        //c.Font(font);
-        drawcalls++;
         c.DrawAlignedText(round(1/Time.DeltaTime)+" fps", 16, 3,3, Alignment.TopLeft);
-        drawcalls++;
         c.DrawAlignedText("seed "+seed, 16, 3,27, Alignment.TopLeft);
+    }
 
+    static void render3D(ICanvas c) {
+        var canvasShader = new CubeCanvasShader() {
+            tex = atlas,
+        };
 
+        var vertexShader = new CubeVertexShader() {
+            world = Matrix4x4.CreateRotationY(Time.TotalTime*Angle.ToRadians(60)),
+            view = Matrix4x4.CreateLookAtLeftHanded(Vector3.One,Vector3.Zero,Vector3.UnitY),
+            proj = Matrix4x4.CreatePerspectiveFieldOfViewLeftHanded(MathF.PI/3f,c.Width/(float)c.Height,1f,100f) 
+        };
 
-
-
-        drawcalls++;
-        c.DrawAlignedText(drawcalls+" drawcalls", 16, 3,51, Alignment.TopLeft);
+        c.Fill(canvasShader, vertexShader);
+        c.DrawTriangles<Vertex>(vertices);
     }
 
     static void renderworld(ICanvas c) {
@@ -49,18 +52,28 @@
                                 { world[u][v][w].lod.ApplyChanges(); world[u][v][w].appliedtex = true; }
 
                                 if(screenx>-chunklodsizex*(zoom*.5f)&&screeny>-chunklodsizey*(zoom*.5f)&&screenx<Window.Width+chunklodsizex*(zoom*.5f)&&screeny<Window.Height+chunklodsizey*(zoom*.5f)) {
-                                    drawcalls++;
                                     float bright = v*chunksize/((float)chunksize*worldsizey);
-                                    c.DrawTexture(
-                                        world[u][v][w].lod, 
-                                        new Rectangle(
-                                            screenx, screeny,
-                                            world[u][v][w].lod.Width * zoom, 
-                                            world[u][v][w].lod.Height * -zoom, 
-                                            Alignment.Center
-                                        ),
-                                        new ColorF(bright, bright, bright, 1)
-                                    );
+                                    if(hshaded)
+                                        c.DrawTexture(
+                                            world[u][v][w].lod, 
+                                            new Rectangle(
+                                                screenx, screeny,
+                                                world[u][v][w].lod.Width * zoom, 
+                                                world[u][v][w].lod.Height * -zoom, 
+                                                Alignment.Center
+                                            ),
+                                            new ColorF(bright, bright, bright, 1)
+                                        );
+                                    else
+                                        c.DrawTexture(
+                                            world[u][v][w].lod, 
+                                            new Rectangle(
+                                                screenx, screeny,
+                                                world[u][v][w].lod.Width * zoom, 
+                                                world[u][v][w].lod.Height * -zoom, 
+                                                Alignment.Center
+                                            )
+                                        );
                                 }
                             }
                         }
@@ -96,7 +109,6 @@
                                 float screenx = 1920/2+(x*6-z*6)*zoom-cam.X*size, screeny = 1080/2+(-y*6+z*3+x*3)*zoom-cam.Y*size;
 
                                 if(screenx>-size&&screeny>-size&&screenx<Window.Width+size&&screeny<Window.Height+size) {
-                                    drawcalls++;
                                     c.DrawTexture(
                                         atlas,
                                         new Rectangle(world[u][v][w].tiles[x,y,z]*16%256, 240-floor(world[u][v][w].tiles[x,y,z]/16)*16, 16, 16),
