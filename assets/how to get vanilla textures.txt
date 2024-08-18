@@ -1,0 +1,3 @@
+for making "all" of my textures in farmlight, i use the atropoeia (https://lospec.com/palette-list/atropoeia) palette
+if you want to make your own blocks or edit existing textures, you can use that palette to get a more "vanilla" feel
+to your textures

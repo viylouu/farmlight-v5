@@ -55,9 +55,10 @@
                         await Task.Delay(1);
                 }
 
-        for (int y = 0; y < chunksize; y++)
-            for (int z = 0; z < chunksize; z++)
-                for (int x = 0; x < chunksize; x++)
+        
+        for (int z = 0; z < chunksize; z++)
+            for (int x = 0; x < chunksize; x++)
+                for (int y = 0; y < chunksize; y++)
                     if (world[u][v][w].tiles[x,y,z] != 0) {
                         byte neighbors = 0;
 
