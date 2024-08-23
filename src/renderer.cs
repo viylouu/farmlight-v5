@@ -22,19 +22,21 @@
     static void renderworld(ICanvas c) {
         int minx = (int)clamp((player.X/chunksize)-renderdist/2,0,world.len),
             maxx = (int)clamp((player.X/chunksize)+renderdist/2,0,world.len),
+            miny = (int)clamp((player.Y/chunksize)-renderdist/2,0,world[0].len),
+            maxy = (int)clamp((player.Y/chunksize)+renderdist/2,0,world[0].len),
             minz = (int)clamp((player.Z/chunksize)-renderdist/2,0,world[0][0].len),
             maxz = (int)clamp((player.Z/chunksize)+renderdist/2,0,world[0][0].len);
 
         int playercx = (int)clamp(player.X/chunksize,0,world.len),
             playercy = (int)clamp(player.Y/chunksize,0,world[0].len),
-            playercz = (int)clamp(player.Z / chunksize, 0, world[0][0].len);
+            playercz = (int)clamp(player.Z/chunksize,0,world[0][0].len);
 
         if(world != null)
-            for (int v = 0; v < world[0].len; v++)
+            for (int v = miny; v < maxy; v++)
                 for (int w = minz; w < maxz; w++)
                     for (int u = minx; u < maxx; u++) {
                         if (u!=playercx||v!=playercy||w!=playercz) {
-                            float screenx = 1920/2+(u*chunksize*6-w*chunksize*6)*zoom-cam.X*16*zoom, screeny = 1080/2+(v*chunksize*-6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*16*zoom;
+                            float screenx = 1920/2+(u*chunksize*6-w*chunksize*6)*zoom-cam.X*zoom, screeny = 1080/2+(v*chunksize*-6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*zoom;
                             
                             if (world[u][v][w].generatedtex && !world[u][v][w].empty) {
                                 if (!world[u][v][w].appliedtex)
@@ -74,14 +76,13 @@
     static void rendindividualblocks(ICanvas c, int u, int v, int w) { 
         for (int z = 0; z < chunksize; z++)
             for (int x = 0; x < chunksize; x++)
-                for (int y = 0; y < chunksize; y++) {
+             for (int y = 0; y < chunksize; y++){
                     if((int)floor(player.X%chunksize)==x&&(int)floor(player.Y%chunksize)+1==y&&(int)floor(player.Z%chunksize)==z) {
-                        float size = 16*zoom;
-                        float screenx = 1920/2+(x*6-z*6)*zoom+(u*chunksize*6-w*chunksize*6)*zoom-cam.X*16*zoom, screeny = 1080/2+(-y*6+z*3+x*3)*zoom+(v*chunksize*-6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*16*zoom;
+                        float screenx = 1920/2+(x*6-z*6+u*chunksize*6-w*chunksize*6)*zoom-cam.X*zoom, screeny = 1080/2+(-y*6+z*3+x*3-v*chunksize*6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*zoom;
                         c.DrawTexture(
                             atlas, 
-                            new Rectangle(32,16,16,16,Alignment.BottomLeft), 
-                            new Rectangle(screenx,screeny,size,-size,Alignment.TopCenter)
+                            new Rectangle(0,7*16,16,16,Alignment.BottomLeft), 
+                            new Rectangle(screenx,screeny,zoom*16,-zoom*16,Alignment.TopCenter)
                         );
                     }
 
@@ -103,10 +104,9 @@
                                 neighbors++;
 
                             if(neighbors < 6) {
-                                float size = 16*zoom;
-                                float screenx = 1920/2+(x*6-z*6)*zoom+(u*chunksize*6-w*chunksize*6)*zoom-cam.X*16*zoom, screeny = 1080/2+(-y*6+z*3+x*3)*zoom+(v*chunksize*-6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*16*zoom;
+                                float screenx = 1920/2+(x*6-z*6+u*chunksize*6-w*chunksize*6)*zoom-cam.X*zoom, screeny = 1080/2+(-y*6+z*3+x*3-v*chunksize*6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*zoom;
 
-                                if(screenx>-size&&screeny>-size&&screenx<Window.Width+size&&screeny<Window.Height+size) {
+                                if(screenx>-zoom*16&&screeny>-zoom*16&&screenx<Window.Width+zoom*16&&screeny<Window.Height+zoom*16) {
                                     c.DrawTexture(
                                         atlas,
                                         new Rectangle(world[u][v][w].tiles[x,y,z]*16%256, 240-floor(world[u][v][w].tiles[x,y,z]/16)*16, 16, 16),
