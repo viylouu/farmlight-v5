@@ -6,6 +6,6 @@
         Simulation.SetFixedResolution(1920,1080,Color.Black,false,false,true);
         initperlin();
         mapexpand();
-        atlas.WrapModeY = atlas.WrapModeX = TileMode.Repeat;
+        atlas.WrapModeY = atlas.WrapModeX = WrapMode.Repeat;
     }
 }

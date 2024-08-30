@@ -21,9 +21,9 @@
                     //else if(u*chunksize+x==0||w*chunksize+z==0)
                     //{ world[u][v][w].tiles[x,y,z] = 1; world[u][v][w].empty = false; }
 
-                    i++;
-                    if (i % maxasynccalls == 0)
-                        await Task.Delay(1);
+                    //i++;
+                    //if (i % maxasynccalls == 0)
+                    //    await Task.Delay(1);
                 }
 
         world[u][v][w].generated = true;
@@ -50,9 +50,9 @@
                             world[u][v][w].tiles[x,y,z] = 4;
                     }
 
-                    i++;
-                    if (i % maxasynccalls == 0)
-                        await Task.Delay(1);
+                    //i++;
+                    //if (i % maxasynccalls == 0)
+                    //    await Task.Delay(1);
                 }
 
         
@@ -83,12 +83,12 @@
 
                             for(int j = 0; j < 16; j++)
                                 for(int k = 0; k < 16; k++) {
-                                    if(atlas.GetPixel(tilex+j, tiley+k).A > 0)
-                                        world[u][v][w].lod.SetPixel(lodx+j,lody+k,atlas.GetPixel(tilex+j,tiley+k));
+                                    if(atlas[tilex+j,tiley+k].A > 0)
+                                        world[u][v][w].lod[lodx+j,lody+k] = atlas[tilex+j,tiley+k];
 
-                                    i++;
-                                    if (i % maxasynccalls == 0)
-                                        await Task.Delay(1);
+                                    //i++;
+                                    //if (i % maxasynccalls == 0)
+                                    //    await Task.Delay(1);
                                 }
                         }
                     }

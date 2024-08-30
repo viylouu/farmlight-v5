@@ -4,16 +4,7 @@
         //    mapexpand();
         genallchunks();
 
-        /*if (Keyboard.IsKeyDown(Key.W))
-            cam.Y -= 8 * Time.DeltaTime;
-        if (Keyboard.IsKeyDown(Key.S))
-            cam.Y += 8 * Time.DeltaTime;
-        if (Keyboard.IsKeyDown(Key.A))
-            cam.X -= 8 * Time.DeltaTime;
-        if (Keyboard.IsKeyDown(Key.D))
-            cam.X += 8 * Time.DeltaTime;*/
-
-        cam = dtween(cam, new Vector2(player.X*6-player.Z*6,-player.Y*6+player.Z*3+player.X*3-0.5f), 6);
+        cam = dtween(cam, new Vector2(player.X*6-player.Z*6,-player.Y*6+player.Z*3+player.X*3), 6);
 
         if (Keyboard.IsKeyDown(Key.W)) {
             player.X -= 16 * Time.DeltaTime*2;
@@ -42,5 +33,45 @@
 
         if (Keyboard.IsKeyPressed(Key.C))
             view3D = !view3D;
+
+        if (Keyboard.IsKeyPressed(Key.Escape))
+        { pmopen = !pmopen; setopen = false; }
+
+        if (pmopen) {
+            ImGui.Begin("menu");
+
+            ImGui.SetWindowPos(new Vector2(0,0));
+            ImGui.SetWindowSize(ImGui.GetMainViewport().Size/new Vector2(8,1));
+
+            if(!setopen) {
+                if (ImGui.Button("resume"))
+                    pmopen = false;
+                if(ImGui.Button("settings"))
+                    setopen = true;
+                if (ImGui.Button("close"))
+                    Environment.Exit(0);
+            } else {
+                if (ImGui.Button("x"))
+                    setopen = false;
+
+                ImGui.BeginTabBar("settings");
+
+                if(ImGui.BeginTabItem("video")) {
+                    ImGui.ListBox("resolution", ref resI, resses, resses.Length);
+
+                    if (ImGui.Button("apply")) {
+                        res = ressesV[resI];
+                        //spritescale = 
+                        Simulation.SetFixedResolution((int)res.X,(int)res.Y,Color.Black, false, false, true);
+                    }
+
+                    ImGui.EndTabItem();
+                }
+
+                ImGui.EndTabBar();
+            }
+
+            ImGui.End();
+        }
     }
 }

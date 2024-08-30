@@ -1,4 +1,6 @@
-﻿partial class farmlight {
+﻿using System.IO.Compression;
+
+partial class farmlight {
     static void rend(ICanvas c) {
         c.Clear(Color.Black);
 
@@ -44,27 +46,31 @@
 
                                 if(screenx>-chunklodsizex*(zoom*.5f)&&screeny>-chunklodsizey*(zoom*.5f)&&screenx<Window.Width+chunklodsizex*(zoom*.5f)&&screeny<Window.Height+chunklodsizey*(zoom*.5f)) {
                                     float bright = v*chunksize/((float)chunksize*worldsizey);
-                                    if(hshaded)
+                                    if (hshaded) {
                                         c.DrawTexture(
-                                            world[u][v][w].lod, 
+                                            world[u][v][w].lod,
                                             new Rectangle(
                                                 screenx, screeny,
-                                                world[u][v][w].lod.Width * zoom, 
-                                                world[u][v][w].lod.Height * -zoom, 
+                                                world[u][v][w].lod.Width * zoom,
+                                                world[u][v][w].lod.Height * zoom,
                                                 Alignment.Center
                                             ),
                                             new ColorF(bright, bright, bright, 1)
                                         );
-                                    else
+                                        c.Flush();
+                                    }
+                                    else {
                                         c.DrawTexture(
-                                            world[u][v][w].lod, 
+                                            world[u][v][w].lod,
                                             new Rectangle(
                                                 screenx, screeny,
-                                                world[u][v][w].lod.Width * zoom, 
-                                                world[u][v][w].lod.Height * -zoom, 
+                                                world[u][v][w].lod.Width * zoom,
+                                                world[u][v][w].lod.Height * zoom,
                                                 Alignment.Center
                                             )
                                         );
+                                        c.Flush();
+                                    }
                                 }
                             }
                         }
@@ -77,15 +83,16 @@
         for (int z = 0; z < chunksize; z++)
             for (int x = 0; x < chunksize; x++)
              for (int y = 0; y < chunksize; y++){
-                    if((int)floor(player.X%chunksize)==x&&(int)floor(player.Y%chunksize)+1==y&&(int)floor(player.Z%chunksize)==z) {
-                        float screenx = 1920/2+(x*6-z*6+u*chunksize*6-w*chunksize*6)*zoom-cam.X*zoom, screeny = 1080/2+(-y*6+z*3+x*3-v*chunksize*6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*zoom;
+                    if((int)floor(player.X%chunksize)==x&&(int)floor((player.Y+1)%chunksize)==y&&(int)floor(player.Z%chunksize)==z) {
+                        float screenx = 1920/2+(player.X*6-player.Z*6)*zoom-cam.X*zoom, screeny = 1080/2+(-player.Y*6+player.Z*3+player.X*3)*zoom-cam.Y*zoom;
                         c.DrawTexture(
                             atlas, 
-                            new Rectangle(0,7*16,16,16,Alignment.BottomLeft), 
-                            new Rectangle(screenx,screeny,zoom*16,-zoom*16,Alignment.TopCenter)
+                            new Rectangle(0,9*16,16,16,Alignment.TopLeft), 
+                            new Rectangle(screenx,screeny,zoom*16,zoom*16,Alignment.TopCenter)
                         );
+                        c.Flush();
                     }
-
+                     
                     if (world[u][v][w].generated)
                         if (world[u][v][w].tiles[x,y,z] != 0) {
                             byte neighbors = 0;
@@ -105,13 +112,34 @@
 
                             if(neighbors < 6) {
                                 float screenx = 1920/2+(x*6-z*6+u*chunksize*6-w*chunksize*6)*zoom-cam.X*zoom, screeny = 1080/2+(-y*6+z*3+x*3-v*chunksize*6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*zoom;
-
+                                
                                 if(screenx>-zoom*16&&screeny>-zoom*16&&screenx<Window.Width+zoom*16&&screeny<Window.Height+zoom*16) {
                                     c.DrawTexture(
                                         atlas,
-                                        new Rectangle(world[u][v][w].tiles[x,y,z]*16%256, 240-floor(world[u][v][w].tiles[x,y,z]/16)*16, 16, 16),
-                                        new Rectangle(screenx, screeny, 16*zoom, -16*zoom, Alignment.Center)
+                                        new Rectangle(world[u][v][w].tiles[x,y,z]*16%256, floor(world[u][v][w].tiles[x,y,z]/16)*16, 16, 16),
+                                        new Rectangle(screenx, screeny, 16*zoom, 16*zoom, Alignment.Center)
                                     );
+                                    /*if((x<chunksize-1&&z<chunksize-1&&world[u][v][w].tiles[x+1,y,z+1]!=0)&&
+                                        (y>0&&z<chunksize-1&&world[u][v][w].tiles[x,y-1,z+1]!=0))
+                                        c.DrawTexture(
+                                            atlas,
+                                            new Rectangle(12*16,240,16,16),
+                                            new Rectangle(screenx,screeny,16*zoom,16*zoom, Alignment.Center)
+                                        );
+                                    else if(x<chunksize-1&&z<chunksize-1&&world[u][v][w].tiles[x+1,y,z+1]!=0)
+                                        c.DrawTexture(
+                                            atlas,
+                                            new Rectangle(8*16,240,16,16),
+                                            new Rectangle(screenx,screeny,16*zoom,16*zoom, Alignment.Center)
+                                        );
+                                    if((x>0&&z<chunksize-1&&world[u][v][w].tiles[x-1,y,z+1]!=0)&&
+                                        (y>0&&x<chunksize-1&&world[u][v][w].tiles[x+1,y-1,z]!=0))
+                                        c.DrawTexture(
+                                            atlas,
+                                            new Rectangle(13*16,240,16,16),
+                                            new Rectangle(screenx,screeny,16*zoom,16*zoom, Alignment.Center)
+                                        );*/
+                                    c.Flush();
                                 }
                             }
                         }
