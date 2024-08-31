@@ -19,6 +19,7 @@ partial class farmlight {
         c.Fill(Color.White);
         c.DrawAlignedText(round(1/Time.DeltaTime)+" fps", 16, 3,3, Alignment.TopLeft);
         c.DrawAlignedText("seed "+seed, 16, 3,27, Alignment.TopLeft);
+        c.DrawAlignedText($"player ({floor(player.X)},{floor(player.Y)},{floor(player.Z)})", 16, 3,51, Alignment.TopLeft);
     }
 
     static void renderworld(ICanvas c) {

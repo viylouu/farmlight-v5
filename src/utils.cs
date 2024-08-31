@@ -33,4 +33,5 @@ partial class farmlight {
     static Vector3 dtween(Vector3 c, Vector3 t, float s) => c+(t-c)/(s/(Time.DeltaTime*60));
     static float clamp(float c, float b, float a) => Math.Clamp(c,b,a);
     static int clamp(int c, int b, int a) => Math.Clamp(c, b, a);
+    static float abs(float a) => Math.Abs(a);
 }

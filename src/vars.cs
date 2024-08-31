@@ -3,7 +3,8 @@
     static ITexture atlas;
 
     //player
-    static Vector3 player = new Vector3(24,190,24);
+    static Vector3 player = new Vector3(24,239,24);
+    static Vector3 playervel;
 
     //cam
     static Vector2 cam;
