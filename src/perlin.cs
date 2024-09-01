@@ -5,6 +5,7 @@
         public perlin(int seed) {
             fnl = new FastNoiseLite(seed);
             fnl.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+            fnl.SetFractalType(FastNoiseLite.FractalType.FBm);
         }
 
         public perlin() => fnl = new FastNoiseLite();
@@ -13,5 +14,10 @@
         public float get(float x, float y, float z) => (fnl.GetNoise(x,y,z)+1)/2f;
         public void setfreq(float freq = .01f) => fnl.SetFrequency(freq);
         public void setseed(int seed = 0) => fnl.SetSeed(seed);
+
+        public void setfract() {
+            fnl.SetFractalOctaves(4);
+            fnl.SetFractalGain(.8f);
+        }
     }
 }

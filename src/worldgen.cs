@@ -4,11 +4,12 @@
         seed = random(int.MinValue, int.MaxValue);
         perl.setseed(seed);
         perl.setfreq(.05f);
+        perl.setfract();
     }
 
     static async void genchunk(int u, int v, int w) {
         world[u][v][w].tiles = new byte[chunksize,chunksize,chunksize];
-        world[u][v][w].coll = new bool[chunksize,chunksize,chunksize];
+        //world[u][v][w].coll = new bool[chunksize,chunksize,chunksize];
         world[u][v][w].lod = Graphics.CreateTexture(chunklodsizex, chunklodsizey);
 
         int i = 0;
@@ -16,8 +17,8 @@
         for(int x = 0; x < chunksize; x++)
             for(int y = 0; y < chunksize; y++)
                 for(int z = 0; z < chunksize; z++) {
-                    if(perl.get(u*chunksize+x,v*chunksize+y,w*chunksize+z)>.5f&&y+v*chunksize<perl.get(u*chunksize+x,w*chunksize+z)*16+175)
-                    { world[u][v][w].tiles[x,y,z] = 1; world[u][v][w].empty = false; }
+                    if(perl.get(u*chunksize+x,v*chunksize+y,w*chunksize+z)>.5f&&y+v*chunksize<perl.get(u*chunksize+x,w*chunksize+z)*6+175)
+                    { world[u][v][w].tiles[x,y,z] = 1; world[u][v][w].booldata = 0; }
                     //else if(u*chunksize+x==0||w*chunksize+z==0)
                     //{ world[u][v][w].tiles[x,y,z] = 1; world[u][v][w].empty = false; }
 
@@ -26,13 +27,13 @@
                     //    await Task.Delay(1);
                 }
 
-        world[u][v][w].generated = true;
+        world[u][v][w].booldata = (byte)(world[u][v][w].booldata|1);
 
         for(int x = 0; x < chunksize; x++)
             for(int y = 0; y < chunksize; y++)
                 for(int z = 0; z < chunksize; z++) {
                     if (world[u][v][w].tiles[x,y,z] == 1) {
-                        if (y+v*chunksize>perl.get(u*chunksize+x,w*chunksize+z)*16+165) {
+                        if (y+v*chunksize>perl.get(u*chunksize+x,w*chunksize+z)*6+165) {
                             if(y<chunksize-1) {
                                 if (world[u][v][w].tiles[x,y+1,z]==0)
                                     world[u][v][w].tiles[x,y,z] = 2;
@@ -93,7 +94,7 @@
                         }
                     }
 
-        world[u][v][w].generatedtex = true;
+        world[u][v][w].booldata = (byte)(world[u][v][w].booldata|2);
     }
 
     static async void mapexpand() {
@@ -139,7 +140,7 @@
             for (int y = worldsizey-1; y >= 0; y--)
                 for (int z = 0; z < worldsizez; z++)
                     if (x < world.len && y < world[x].len && z < world[x][y].len)
-                        if (!world[x][y][z].generated)
+                        if (!cgenerated(world[x][y][z]))
                             genchunk(x, y, z);
     }
 }

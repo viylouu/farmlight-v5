@@ -1,6 +1,4 @@
-﻿using System.IO.Compression;
-
-partial class farmlight {
+﻿partial class farmlight {
     static void rend(ICanvas c) {
         c.Clear(Color.Black);
 
@@ -41,9 +39,9 @@ partial class farmlight {
                         if (u!=playercx||v!=playercy||w!=playercz) {
                             float screenx = 1920/2+(u*chunksize*6-w*chunksize*6)*zoom-cam.X*zoom, screeny = 1080/2+(v*chunksize*-6+w*chunksize*3+u*chunksize*3)*zoom-cam.Y*zoom;
                             
-                            if (world[u][v][w].generatedtex && !world[u][v][w].empty) {
-                                if (!world[u][v][w].appliedtex)
-                                { world[u][v][w].lod.ApplyChanges(); world[u][v][w].appliedtex = true; }
+                            if (cgeneratedtex(world[u][v][w]) && !cempty(world[u][v][w])) {
+                                if (!cappliedtex(world[u][v][w]))
+                                { world[u][v][w].lod.ApplyChanges(); world[u][v][w].booldata = (byte)(world[u][v][w].booldata|4); }
 
                                 if(screenx>-chunklodsizex*(zoom*.5f)&&screeny>-chunklodsizey*(zoom*.5f)&&screenx<Window.Width+chunklodsizex*(zoom*.5f)&&screeny<Window.Height+chunklodsizey*(zoom*.5f)) {
                                     float bright = v*chunksize/((float)chunksize*worldsizey);
@@ -94,7 +92,7 @@ partial class farmlight {
                         c.Flush();
                     }
                      
-                    if (world[u][v][w].generated)
+                    if (cgenerated(world[u][v][w]))
                         if (world[u][v][w].tiles[x,y,z] != 0) {
                             byte neighbors = 0;
 

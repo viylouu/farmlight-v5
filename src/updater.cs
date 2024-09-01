@@ -38,13 +38,13 @@
             targetvel.Y += -1;
         }
 
-        if (Keyboard.IsKeyDown(Key.Space))
-            playervel.Y = 25 * Time.DeltaTime;
-
-        //if (Keyboard.IsKeyDown(Key.LeftShift))
-        //    player.Y -= 16 * Time.DeltaTime;
         //if (Keyboard.IsKeyDown(Key.Space))
-        //    player.Y += 16 * Time.DeltaTime;
+        //    playervel.Y = 25 * Time.DeltaTime;
+
+        if (Keyboard.IsKeyDown(Key.LeftShift))
+            player.Y -= 16 * Time.DeltaTime;
+        if (Keyboard.IsKeyDown(Key.Space))
+            player.Y += 16 * Time.DeltaTime;
 
         targetvel = targetvel.Normalized() * 12;
 
@@ -67,7 +67,7 @@
         int neg = playervel.Y>0?1:-1;
 
         //if (floor(abs(playervel.Y)) == 0) {
-            player.Y += playervel.Y;
+            /*player.Y += playervel.Y;
 
             int playercx = (int)clamp(player.X/chunksize,0,world.len),
                 playercy = (int)clamp((player.Y-2)/chunksize,0,world[0].len),
