@@ -44,6 +44,23 @@
             }
         }
 
+        public T this[float index] {
+            get {
+                lock (_lock) {
+                    if ((int)index < 0 || (int)index >= len)
+                        return default(T);
+                    return data[(int)index];
+                }
+            }
+            set {
+                lock (_lock) {
+                    if ((int)index < 0 || (int)index >= len)
+                    { Console.WriteLine($"index out of bounds of the array! idx: {index}"); return; }
+                    data[(int)index] = value;
+                }
+            }
+        }
+
         void ensurecap(int min) {
             if (min > data.Length) {
                 int newCapacity = data.Length * 2;
